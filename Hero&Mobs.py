@@ -8,8 +8,11 @@ class Hero:
         self.inventory = []
 
     def attack(self, other):
-        other.health -= self.attack_damage
-        print(f'{self.name} attacked {other.name}, damage {self.attack_damage}')
+        if self.health > 0:
+            other.health -= self.attack_damage
+            return f'{self.name}({self.health}) наносит {self.attack_damage} урона'
+        else:
+            return f'{self.name} погиб!'
 
     def find_item(self, item):
         message = f'Вы нашли {item}'
@@ -28,29 +31,30 @@ class Mob:
         self.health = health
 
     def attack(self, other):
-        other.health -= self.attack_damage
-        print(f'{self.name} нанес {self.attack_damage}')
+        if self.health > 0:
+            other.health -= self.attack_damage
+            return f'{self.name}({self.health}) наносит {self.attack_damage} урона'
+        else:
+            return f'{self.name} повержен!'
 
     def __str__(self):
         return f'{self.__class__.__name__} {self.health}'
 
 
 def main():
+
     def combat(first: Hero, second: Mob):
-        print(f'Status:\n{first.name}: health - {first.health}')
-        print(f'{second.name}: health - {second.health}')
-        first.attack(second)
-        second.attack(first)
-        if first.health <= 0:
-            return f'Победил {second.name}'
-        if second.health <= 0:
-            return f'Победил {first.name}'
-        else:
-            return combat(first, second)
+        while first.health > 0 and second.health > 0:
+            print(first.attack(second))
+            print(second.attack(first))
+        win = first.name if second.health <= 0 else second.name
+        return f'Победил {win}'
 
     hero = Hero()
-    mob = Mob('Ork', attack_damage=5)
-    print('Начало схватки')
+    mob = Mob('Ork', attack_damage=20)
+    print('Начало схватки\n', '-' * 30)
+    print(f'Status: \n{hero.name}: health - {hero.health}', end=' против ')
+    print(f'{mob.name}: health - {mob.health}')
     print(combat(hero, mob))
 
 
